@@ -6,17 +6,17 @@
     </div>
 
     <!-- 全局状态 -->
-    <p @click="$store.commit('add')">{{$store.state.count}}</p>
-    <p @click="$store.dispatch('add')">{{$store.state.count}}</p>
-    <p>{{$store.getters.doubleCounter}}</p>
-    
-    <router-view/>
+    <p @click="$store.commit('add')">count：{{ $store.state.count }}</p>
+    <p @click="$store.dispatch('add')">async count：{{ $store.state.count }}</p>
+    <p>double count：{{ $store.getters.doubleCounter }}</p>
+
+    <router-view />
   </div>
 </template>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
