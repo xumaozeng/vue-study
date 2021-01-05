@@ -11,28 +11,42 @@ class Store {
     this._mutations = options.mutations || {};
     this._actions = options.actions || {};
 
+    // getters
+    // 1.动态设置getters属性
+    // 2.响应式
+    // 附加：能否利用上vue computed
+    this._wrappedGetters = options.getters // 保存用户传过来的getters
+    this.getters = {} // 暴露给用户的getters
+    const computed = {}; // 定义computed
+
+    const store = this;
+    // {doubleCounter(state){}}
+    Object.keys(this._wrappedGetters).forEach(key => {
+      // 获取getters
+      const fn = store._wrappedGetters[key];
+      // 转化为无参函数
+      computed[key] = function () {
+        return fn(store.state)
+      }
+
+      // 对getters设置只读属性
+      Object.defineProperty(store.getters, key, {
+        get: () => store._vm[key]
+      })
+    })
+
     // 2.做响应式状态state属性
     // Vue.util.defineReactive(this, 'state', {})
     this._vm = new Vue({
       data: {
         $$state: options.state
       },
-      computed: {
-        getters() {
-          return options.getters;
-        }
-      }
+      computed
     });
 
     // 上下文绑定
     this.commit = this.commit.bind(this);
     this.dispatch = this.dispatch.bind(this);
-
-    // getters
-    // 1.动态设置getters属性
-    // 2.响应式
-    // 附加：能否利用上vue computed
-    this.initGetters = this.initGetters.bind(this);
   }
 
   // 给用户暴露接口
@@ -43,24 +57,6 @@ class Store {
 
   set state(v) {
     console.error("please use replaceState to reset state");
-  }
-
-  // getters
-  get getters() {
-    return this.initGetters();
-  }
-
-  set getters(v) {
-    console.error("please use replaceGetters to reset");
-  }
-
-  // 执行getters里的函数，返回一个对象集合
-  initGetters() {
-    const newGetters = {};
-    for (const key in this._vm.getters) {
-      newGetters[key] = this._vm.getters[key](this.state);
-    }
-    return newGetters;
   }
 
   // store.commit(type, payload)
