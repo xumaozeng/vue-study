@@ -76,6 +76,7 @@ class KVue {
     // 1.保存选项
     this.$options = options;
     this.$data = options.data;
+    this.$methods = options.methods; // 保存methods方法
 
     // 2.响应式处理
     observe(this.$data);
@@ -127,20 +128,57 @@ class Compile {
     return node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent);
   }
 
+  // 处理元素所有动态属性
+  compileElement(node) {
+    Array.from(node.attributes).forEach(attr => {
+      // console.log(attr);
+      const attrName = attr.name; // 属性名
+      const exp = attr.value; // 表达式
+
+      // 判断是否是一个指令
+      if (this.isDir(attrName)) {
+        // 执行指令处理函数
+        // k-text，关心text
+        const dir = attrName.substring(2);
+        this[dir] && this[dir](node, exp);
+      } else if (this.isClick(attrName)) {
+        // 判断是不是click方法
+        // @click="onClick"
+        const clickName = attrName.substring(1);
+        this[clickName] && this[clickName](node, exp);
+      }
+    });
+  }
+
   // 指令
   isDir(attrName) {
     // 是否以k-开头的
     return attrName.startsWith("k-");
   }
 
+  // click方法
+  isClick(attrName) {
+    // 是否以@开头的
+    return attrName.startsWith("@");
+  }
+
+  // 在vm.$methods中找到key为"onClick"的方法并执行
+  click(node, exp) {
+    const method = this.$vm.$methods[exp];
+    // 给node添加click监听事件，回调函数执行method
+    node.addEventListener("click", method.bind(this.$vm));
+  }
+
   // 更新函数
   update(node, exp, dir) {
     const fn = this[dir + "Updater"];
-    fn && fn(node, this.$vm[exp]);
+    // 传入实例vm以及key
+    fn && fn(node, this.$vm[exp], this, exp);
 
     // update:创建Watcher
+    const that = this;
     new Watcher(this.$vm, exp, function(val) {
-      fn && fn(node, val);
+      fn && fn(node, val, that, exp);
     });
   }
 
@@ -149,31 +187,13 @@ class Compile {
     this.update(node, RegExp.$1, "text");
   }
 
-  // 实操函数
-  textUpdater(node, val) {
-    node.textContent = val;
-  }
-
-  // 处理元素所有动态属性
-  compileElement(node) {
-    Array.from(node.attributes).forEach(attr => {
-      console.log(attr);
-      const attrName = attr.name; // 属性名
-      const exp = attr.value; // 表达式
-
-      // pd是否是一个指令
-      if (this.isDir(attrName)) {
-        // 执行指令处理函数
-        // k-text，关心text
-        const dir = attrName.substring(2);
-        this[dir] && this[dir](node, exp);
-      }
-    });
-  }
-
   // k-text处理函数
   text(node, exp) {
     this.update(node, exp, "text");
+  }
+
+  textUpdater(node, val) {
+    node.textContent = val;
   }
 
   // k-html
@@ -183,6 +203,24 @@ class Compile {
 
   htmlUpdater(node, val) {
     node.innerHTML = val;
+  }
+
+  // k-model,input->type=text
+  model(node, exp) {
+    this.update(node, exp, "model");
+  }
+
+  modelUpdater(node, val, that, exp) {
+    // 判断input的type=text类型
+    if (node.nodeName === "INPUT" && node.type === "text") {
+      node.value = val;
+      // 对input事件监听
+      // console.log(that, exp);
+      node.addEventListener("input", e => {
+        // 对key做set操作
+        that.$vm[exp] = e.target.value;
+      });
+    }
   }
 }
 
