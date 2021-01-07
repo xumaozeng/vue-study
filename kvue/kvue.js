@@ -172,13 +172,12 @@ class Compile {
   // 更新函数
   update(node, exp, dir) {
     const fn = this[dir + "Updater"];
-    // 传入实例vm以及key
-    fn && fn(node, this.$vm[exp], this, exp);
+    fn && fn(node, this.$vm[exp]);
 
     // update:创建Watcher
     const that = this;
     new Watcher(this.$vm, exp, function(val) {
-      fn && fn(node, val, that, exp);
+      fn && fn(node, val);
     });
   }
 
@@ -207,19 +206,21 @@ class Compile {
 
   // k-model,input->type=text
   model(node, exp) {
+    // update方法只完成赋值和更新
     this.update(node, exp, "model");
+
+    // 事件监听
+    node.addEventListener("input", e => {
+      // 新的值赋值给数据即可
+      this.$vm[exp] = e.target.value;
+    });
   }
 
-  modelUpdater(node, val, that, exp) {
+  modelUpdater(node, val) {
     // 判断input的type=text类型
     if (node.nodeName === "INPUT" && node.type === "text") {
+      // 表单元素赋值
       node.value = val;
-      // 对input事件监听
-      // console.log(that, exp);
-      node.addEventListener("input", e => {
-        // 对key做set操作
-        that.$vm[exp] = e.target.value;
-      });
     }
   }
 }
