@@ -141,11 +141,11 @@ class Compile {
         // k-text，关心text
         const dir = attrName.substring(2);
         this[dir] && this[dir](node, exp);
-      } else if (this.isClick(attrName)) {
-        // 判断是不是click方法
+      } else if (this.isEvent(attrName)) {
+        // 判断是不是@xxx事件
         // @click="onClick"
-        const clickName = attrName.substring(1);
-        this[clickName] && this[clickName](node, exp);
+        const eventName = attrName.substring(1);
+        this[eventName] && this[eventName](node, exp);
       }
     });
   }
@@ -157,7 +157,7 @@ class Compile {
   }
 
   // click方法
-  isClick(attrName) {
+  isEvent(attrName) {
     // 是否以@开头的
     return attrName.startsWith("@");
   }
