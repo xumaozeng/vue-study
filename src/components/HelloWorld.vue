@@ -5,6 +5,8 @@
     <!-- <Communication></Communication> -->
     <!-- 表单 -->
     <FormExample></FormExample>
+    <!-- 表格 -->
+    <!-- <TableExample></TableExample> -->
     <!-- 插槽 -->
     <!-- <SlotExample></SlotExample> -->
     <!-- 递归 -->
@@ -13,23 +15,24 @@
 </template>
 
 <script>
-import Communication from '@/components/communication';
-import FormExample from '@/components/form';
-import SlotExample from '@/components/slots';
-import TreeExample from '@/components/recursion';
+import Communication from "@/components/communication";
+import FormExample from "@/components/form";
+import SlotExample from "@/components/slots";
+import TreeExample from "@/components/recursion";
+import TableExample from "@/components/table";
 
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
+    msg: String,
   },
   components: {
     Communication,
     FormExample,
     SlotExample,
-    TreeExample
+    TreeExample,
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
