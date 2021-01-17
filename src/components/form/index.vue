@@ -24,6 +24,10 @@ import KFormItem from "./KFormItem.vue";
 // import ElementTest from "@/components/form/ElementTest.vue";
 import KInput from "./KInput.vue";
 
+// 导入弹窗和create方法
+/* import Notice from "@/components/Notice.vue";
+import create from "@/utils/create"; */
+
 export default {
   provide() {
     // 隔代传参给KFormItem
@@ -53,11 +57,21 @@ export default {
     onLogin() {
       // 全局校验
       this.$refs.loginForm.validate((isValid) => {
-        if (isValid) {
+        /* if (isValid) {
           console.log("submit login");
         } else {
           alert("校验失败");
-        }
+        } */
+        /* create(Notice, {
+          title: "搬砖",
+          message: isValid ? "请求登录" : "校验失败",
+        }).show(); */
+
+        // 用封装插件形式
+        this.$notice({
+          title: "测试",
+          message: isValid ? "过" : "不过",
+        });
       });
     },
   },
