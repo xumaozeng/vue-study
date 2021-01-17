@@ -4,7 +4,7 @@
     <!-- props, 自定义事件 -->
     <Child1 msg="some msg from parent" @some-event="onSomeEvent"></Child1>
     <!-- 事件总线 -->
-    <Child2 ref="child2" foo="foo"></Child2>
+    <Child2 ref="child2" foo="foo" @some-event="onSomeEvent"></Child2>
   </div>
 </template>
 
@@ -16,6 +16,12 @@ export default {
   components: {
     Child1,
     Child2,
+  },
+  // 隔代传参
+  provide() {
+    return {
+      yc: "yichan",
+    };
   },
   methods: {
     onSomeEvent(msg) {
