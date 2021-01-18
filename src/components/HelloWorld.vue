@@ -4,9 +4,9 @@
     <!-- 组件通信 -->
     <!-- <Communication></Communication> -->
     <!-- 表单 -->
-    <FormExample></FormExample>
+    <!-- <FormExample></FormExample> -->
     <!-- 表格 -->
-    <!-- <TableExample></TableExample> -->
+    <TableExample></TableExample>
     <!-- 插槽 -->
     <!-- <SlotExample></SlotExample> -->
     <!-- 递归 -->
@@ -31,6 +31,7 @@ export default {
     FormExample,
     SlotExample,
     TreeExample,
+    TableExample,
   },
 };
 </script>
