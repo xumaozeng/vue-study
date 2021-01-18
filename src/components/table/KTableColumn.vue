@@ -18,6 +18,10 @@ export default {
       type: String,
       default: "",
     },
+    sortable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -27,8 +31,6 @@ export default {
   mounted() {
     const dom_index = this.$el.parentNode;
     this.index = dom_index.dataset.index;
-
-    console.log(this.tableData[this.index]);
   },
 };
 </script>

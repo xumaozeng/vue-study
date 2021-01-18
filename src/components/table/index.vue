@@ -1,8 +1,11 @@
 <template>
   <div>
     <!-- KTable -->
-    <k-table :data="tableData">
-      <k-table-column prop="date" label="日期"></k-table-column>
+    <k-table
+      :data="tableData"
+      :default-sort="{ prop: 'date', order: 'descending' }"
+    >
+      <k-table-column prop="date" label="日期" sortable></k-table-column>
       <k-table-column prop="name" label="姓名"></k-table-column>
       <k-table-column prop="address" label="地址"></k-table-column>
       <k-table-column label="操作">
