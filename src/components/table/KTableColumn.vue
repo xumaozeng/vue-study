@@ -1,7 +1,8 @@
 <template>
   <!-- 显示表格单元内容 -->
   <td>
-    <slot>{{ tableData[index][prop] }}</slot>
+    <slot v-if="tableData[index][prop]">{{ tableData[index][prop] }}</slot>
+    <slot name="scope" :row="tableData[index]"></slot>
   </td>
 </template>
 
@@ -26,7 +27,8 @@ export default {
   mounted() {
     const dom_index = this.$el.parentNode;
     this.index = dom_index.dataset.index;
-    console.log(this.index);
+
+    console.log(this.tableData[this.index]);
   },
 };
 </script>

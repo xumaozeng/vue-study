@@ -11,7 +11,7 @@
       </thead>
       <!-- 表内容 -->
       <tbody>
-        <tr v-for="(item, index) in data" :key="index" :data-index="index">
+        <tr v-for="(d, index) in data" :key="index" :data-index="index">
           <slot></slot>
         </tr>
       </tbody>
