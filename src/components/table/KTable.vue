@@ -5,7 +5,13 @@
       <thead>
         <tr>
           <th v-for="item in labels" :key="item.label">
-            {{ item.label }}
+            <div v-if="item.sortable">
+              {{ item.label }}&nbsp;
+              <span style="font-size: 10px" @click="getSort((order = !order))"
+                >升序/降序</span
+              >
+            </div>
+            <span v-else>{{ item.label }}</span>
           </th>
         </tr>
       </thead>
@@ -35,6 +41,8 @@ export default {
   data() {
     return {
       labels: [],
+      // 排序
+      order: false,
     };
   },
   mounted() {
@@ -43,18 +51,17 @@ export default {
       .filter((item) => item.label)
       .map((item) => ({ label: item.label, sortable: item.sortable }));
     this.labels = this.unique(labels);
-    console.log(this.labels);
 
     // 排序
     this.getSort();
   },
   methods: {
-    getSort() {
+    getSort(o = false) {
       const { prop, order } = this.defaultSort;
       this.data.sort((a, b) => {
         const item1 = new Date(a[prop]).getTime();
         const item2 = new Date(b[prop]).getTime();
-        if (order === "descending") {
+        if (order === "descending" && o) {
           return item2 - item1;
         } else {
           return item1 - item2;
