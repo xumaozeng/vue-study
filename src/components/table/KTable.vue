@@ -1,24 +1,3 @@
-<template>
-  <!-- 表格 -->
-  <table>
-    <!-- 表头 -->
-    <thead>
-      <tr>
-        <th v-for="column in columns" :key="column.label">
-          {{ column.label }}
-        </th>
-      </tr>
-    </thead>
-    <!-- 内容 -->
-    <tbody>
-      <tr v-for="(row, index) in rows" :key="index">
-        <td v-for="(value, key) in row" :key="key">
-          {{ value }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</template>
 
 <script>
 export default {
@@ -30,22 +9,44 @@ export default {
   },
   computed: {
     columns() {
-      // 获取插槽$slots.default中的vnode节点
-      return this.$slots.default.map(({ data }) => ({
-        label: data.attrs.label,
-        prop: data.attrs.prop,
-      }));
-    },
-    rows() {
-      // 获取有prop属性的数组对象
-      return this.data.map((item) => {
-        const ret = {};
-        this.columns.forEach(({ prop }) => {
-          ret[prop] = item[prop];
-        });
-        return ret;
+      // 由于不一定有prop属性，内部如果出现了默认作用域插槽，则就按照它来执行渲染
+      return this.$slots.default.map(({ data: { attrs, scopedSlots } }) => {
+        const column = { ...attrs };
+        if (scopedSlots) {
+          // 自定义模板
+          column.renderCell = (row, i) => (
+            <div>{scopedSlots.default({ row, $index: i })}</div>
+          );
+        } else {
+          // 设置prop的情况
+          column.renderCell = (row) => <div>{row[column.prop]}</div>;
+        }
+        return column;
       });
     },
+  },
+  // 实现一个渲染函数JSX
+  render() {
+    return (
+      <table>
+        <thead>
+          <tr>
+            {this.columns.map((column) => (
+              <th key={column.label}>{column.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {this.data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {this.columns.map((column, columnIndex) => (
+                <td key={columnIndex}>{column.renderCell(row, rowIndex)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   },
 };
 </script>
