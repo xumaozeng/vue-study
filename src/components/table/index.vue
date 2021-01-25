@@ -2,8 +2,8 @@
   <div>
     <!-- KTable -->
     <k-table :data="tableData">
-      <k-table-column prop="date" label="日期"></k-table-column>
-      <k-table-column prop="name" label="姓名"></k-table-column>
+      <k-table-column sortable prop="date" label="日期"></k-table-column>
+      <k-table-column sortable prop="name" label="姓名"></k-table-column>
       <k-table-column prop="address" label="地址"></k-table-column>
       <k-table-column label="操作">
         <template v-slot:default="scope">
